@@ -167,6 +167,7 @@ module AttrEncrypted
       define_method("#{attribute}=") do |value|
         if should_update_encrypted_attribute?(attribute, value)
           send("#{encrypted_attribute_name}=", encrypt(attribute, value))
+          value = options[:marshaler].send(options[:load_method], value) if options[:marshal] && value.is_a?(String)
           instance_variable_set("@#{attribute}", value)
         end
       end

@@ -11,6 +11,18 @@ class SillyEncryptor
   end
 end
 
+class ArrayMarshaler
+  class << self
+    def dump(value)
+      value.is_a?(Array) ? value.join(",") : value
+    end
+
+    def load(value)
+      value.split(",")
+    end
+  end
+end
+
 class User
   extend AttrEncrypted
   self.attr_encrypted_options[:key] = Proc.new { |user| SECRET_KEY } # default key
@@ -22,7 +34,7 @@ class User
   attr_encrypted :credit_card, :encryptor => SillyEncryptor, :encrypt_method => :silly_encrypt, :decrypt_method => :silly_decrypt, :some_arg => 'test'
   attr_encrypted :with_encoding, :key => SECRET_KEY, :encode => true
   attr_encrypted :with_custom_encoding, :key => SECRET_KEY, :encode => 'm'
-  attr_encrypted :with_marshaling, :key => SECRET_KEY, :marshal => true
+  attr_encrypted :with_marshaling, :key => SECRET_KEY, :marshal => true, :marshaler => ArrayMarshaler
   attr_encrypted :with_true_if, :key => SECRET_KEY, :if => true, mode: :per_attribute_iv_and_salt
   attr_encrypted :with_false_if, :key => SECRET_KEY, :if => false, mode: :per_attribute_iv_and_salt
   attr_encrypted :with_true_unless, :key => SECRET_KEY, :unless => true, mode: :per_attribute_iv_and_salt
@@ -183,9 +195,17 @@ class AttrEncryptedTest < Minitest::Test
     assert_equal User.decrypt_with_encoding(encrypted, iv: @iv), User.decrypt_without_encoding(encrypted.unpack('m').first, iv: @iv)
   end
 
-  def test_should_encrypt_with_marshaling
+  def test_should_encrypt_with_marshaling_an_array
     @user = User.new
-    @user.with_marshaling = [1, 2, 3]
+    @user.with_marshaling = ["a", "b", "c"]
+    assert_equal ["a", "b", "c"], @user.with_marshaling
+    refute_nil @user.encrypted_with_marshaling
+  end
+
+  def test_should_encrypt_with_marshaling_a_string
+    @user = User.new
+    @user.with_marshaling = "a,b,c"
+    assert_equal ["a", "b", "c"], @user.with_marshaling
     refute_nil @user.encrypted_with_marshaling
   end
 
