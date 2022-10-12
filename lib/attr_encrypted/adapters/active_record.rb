@@ -78,7 +78,7 @@ if defined?(ActiveRecord::Base)
               # attributes are handled, @attributes[attr].value is nil which
               # breaks attribute_was. Setting it here returns us to the expected
               # behavior.
-              if ::ActiveRecord::VERSION::STRING >= "5.2"
+              if ::ActiveRecord::VERSION::STRING == "5.2"
                 # This is needed support attribute_was before a record has
                 # been saved
                 if ::ActiveRecord::VERSION::STRING < "6.0"
