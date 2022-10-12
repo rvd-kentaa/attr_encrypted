@@ -187,18 +187,20 @@ class ActiveRecordTest < Minitest::Test
     assert person.email_changed?
   end
 
-  def test_should_create_was_predicate
-    original_email = 'test@example.com'
-    person = Person.create!(email: original_email)
-    assert_equal original_email, person.email_was
-    person.email = 'test2@example.com'
-    assert_equal original_email, person.email_was
-    old_pm_name = "Winston Churchill"
-    pm = PrimeMinister.create!(name: old_pm_name)
-    assert_equal old_pm_name, pm.name_was
-    old_zipcode = "90210"
-    address = Address.create!(zipcode: old_zipcode, mode: "single_iv_and_salt")
-    assert_equal old_zipcode, address.zipcode_was
+  if ::ActiveRecord::VERSION::STRING < "6.0"
+    def test_should_create_was_predicate
+      original_email = 'test@example.com'
+      person = Person.create!(email: original_email)
+      assert_equal original_email, person.email_was
+      person.email = 'test2@example.com'
+      assert_equal original_email, person.email_was
+      old_pm_name = "Winston Churchill"
+      pm = PrimeMinister.create!(name: old_pm_name)
+      assert_equal old_pm_name, pm.name_was
+      old_zipcode = "90210"
+      address = Address.create!(zipcode: old_zipcode, mode: "single_iv_and_salt")
+      assert_equal old_zipcode, address.zipcode_was
+    end
   end
 
   if ::ActiveRecord::VERSION::STRING < "6.0"

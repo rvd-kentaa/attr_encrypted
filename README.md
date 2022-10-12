@@ -65,12 +65,12 @@ If you're using a PORO, you have to do a little bit more work by extending the c
 
 ### Encrypt/decrypt attribute class methods
 
-Two class methods are available for each attribute: `User.encrypt_email` and `User.decrypt_email`. They accept as arguments the same options that the `attr_encrypted` class method accepts. For example:
+Two class methods are available for each attribute: `User.attr_encryptemail` and `User.decrypt_email`. They accept as arguments the same options that the `attr_encrypted` class method accepts. For example:
 
 ```ruby
   key = SecureRandom.random_bytes(32)
   iv = SecureRandom.random_bytes(12)
-  encrypted_email = User.encrypt_email('test@test.com', iv: iv, key: key)
+  encrypted_email = User.attr_encryptemail('test@test.com', iv: iv, key: key)
   email = User.decrypt_email(encrypted_email, iv: iv, key: key)
 ```
 

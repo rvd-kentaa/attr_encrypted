@@ -304,9 +304,9 @@ module AttrEncrypted
   #     attr_encrypted :email, key: 'my secret key'
   #   end
   #
-  #   User.encrypt_email('SOME_ENCRYPTED_EMAIL_STRING')
+  #   User.attr_encrypt_email('SOME_ENCRYPTED_EMAIL_STRING')
   def method_missing(method, *arguments, &block)
-    if method.to_s =~ /^((en|de)crypt)_(.+)$/ && attr_encrypted?($3)
+    if method.to_s =~ /^((attr_en|de)crypt)_(.+)$/ && attr_encrypted?($3)
       send($1, $3, *arguments)
     else
       super
